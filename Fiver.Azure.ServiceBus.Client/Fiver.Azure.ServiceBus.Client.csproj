@@ -16,4 +16,10 @@
     <ProjectReference Include="..\Fiver.Azure.ServiceBus\Fiver.Azure.ServiceBus.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

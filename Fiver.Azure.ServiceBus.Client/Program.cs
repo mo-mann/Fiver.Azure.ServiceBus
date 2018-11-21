@@ -5,6 +5,7 @@ using Fiver.Azure.ServiceBus.Topic;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Fiver.Azure.ServiceBus.Client
@@ -16,14 +17,20 @@ namespace Fiver.Azure.ServiceBus.Client
             try
             {
                 // Queue
-                //Queue_Send().Wait();
-                //Queue_Receive();
+                Queue_Send().Wait();
+                Thread.Sleep(1000);
+                Queue_Send().Wait();
+                Thread.Sleep(1000);
+                Queue_Send().Wait();
+                Thread.Sleep(1000);
+
+                Queue_Receive();
 
                 // Topic
-                //Topic_Send().Wait();
+                Topic_Send().Wait();
 
                 // Subscription
-                //Subscription_Receive();
+                Subscription_Receive();
             }
             catch (Exception ex)
             {
@@ -41,6 +48,10 @@ namespace Fiver.Azure.ServiceBus.Client
         {
             var config = GetConfig();
 
+            //var connName = "Endpoint=sb://az532testbusmsm.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=H3/Z/4jxtfGqToxT14cOPRjk0bBGR+G7aFU8b7Ej1sE=";
+            //var queueName = "az532testqueue";
+
+
             var settings = new AzureQueueSettings(
                 connectionString: config["ServiceBus_ConnectionString"],
                 queueName: config["ServiceBus_QueueName"]);
@@ -50,7 +61,7 @@ namespace Fiver.Azure.ServiceBus.Client
             IAzureQueueSender<Message> sender = new AzureQueueSender<Message>(settings);
             await sender.SendAsync(message);
 
-            Console.WriteLine("Sent");
+            Console.WriteLine("Queue_Send --> Sent message : " + message.Text);
         }
 
         private static void Queue_Receive()
@@ -65,7 +76,7 @@ namespace Fiver.Azure.ServiceBus.Client
             receiver.Receive(
                 message =>
                 {
-                    throw new ApplicationException("Oops!");
+                    //throw new ApplicationException("Oops!");
                     Console.WriteLine(message.Text);
                     return MessageProcessResponse.Complete;
                 },
@@ -90,9 +101,9 @@ namespace Fiver.Azure.ServiceBus.Client
             IAzureTopicSender<Message> sender = new AzureTopicSender<Message>(settings);
             await sender.SendAsync(message);
 
-            Console.WriteLine("Sent");
+            Console.WriteLine("Topic_Send --> Sent message : " + message.Text);
         }
-        
+
         private static void Subscription_Receive()
         {
             var config = GetConfig();
